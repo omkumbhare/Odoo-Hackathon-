@@ -1,0 +1,9 @@
+ID,Asset Tag,Name,Category,Model,Serial Number,Purchase Date,Purchase Cost,Status,Current Location
+1,AHDUJ75,OppoReno8T,Laptops & Computers,CHHP7,454,2026-07-07,500000.0,Allocated,sales Division
+2,123av,macbook,Laptops & Computers,,,2026-03-01,200.0,Available,
+3,LENEVO,computer,Laptops & Computers,LEGION,1234,2026-07-12,200.0,Allocated,
+4,VOLKSWAGEN ,CAR,Company Vehicles,VIRTUS,82,2026-07-12,200.0,Available,
+5,SKODA,CAR,Laptops & Computers,VIRTUS,82,2005-06-09,9000.0,Available,
+6,WWW,LIFT,Infrastructure Equipment,NEW,82,2025-02-14,9000.0,Available,
+7,LZLZ,WHEELCHAIR,Office Desk Furniture,NEW,82,2020-09-09,89.94,Available,
+8,oue,audi,Company Vehicles,NEW,845,2026-07-06,200.0,Under Maintenance,
