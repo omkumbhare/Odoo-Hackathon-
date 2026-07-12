@@ -1,0 +1,310 @@
+/* ================= GLOBALS & ROOT VARIABLES ================= */
+:root {
+    --transition-speed: 0.3s;
+    --sidebar-width: 260px;
+    
+    /* Light Theme (Default) */
+    --bg-primary: #f4f6f9;
+    --bg-card: rgba(255, 255, 255, 0.85);
+    --bg-sidebar: #1e293b;
+    --bg-sidebar-hover: rgba(255, 255, 255, 0.1);
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-sidebar: #e2e8f0;
+    --border-color: rgba(226, 232, 240, 0.8);
+    --glass-blur: blur(12px);
+    --primary-gradient: linear-gradient(135deg, #0d6efd, #0b5ed7);
+    --success-gradient: linear-gradient(135deg, #198754, #157347);
+    --warning-gradient: linear-gradient(135deg, #ffc107, #e0a800);
+    --info-gradient: linear-gradient(135deg, #0dcaf0, #31d2f2);
+    --danger-gradient: linear-gradient(135deg, #dc3545, #bb2d3b);
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="dark"] {
+    /* Dark Theme Override */
+    --bg-primary: #0f172a;
+    --bg-card: rgba(30, 41, 59, 0.7);
+    --bg-sidebar: #020617;
+    --bg-sidebar-hover: rgba(255, 255, 255, 0.05);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-sidebar: #cbd5e1;
+    --border-color: rgba(51, 65, 85, 0.5);
+    --card-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.3);
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+    overflow-x: hidden;
+}
+
+/* ================= UTILITIES & ANIMATIONS ================= */
+.glass-panel {
+    background: var(--bg-card);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color var(--transition-speed), border-color var(--transition-speed);
+}
+
+.glass-panel:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.gradient-card-primary { background: var(--primary-gradient); color: #fff; border: none; }
+.gradient-card-success { background: var(--success-gradient); color: #fff; border: none; }
+.gradient-card-warning { background: var(--warning-gradient); color: #1e293b; border: none; }
+.gradient-card-info { background: var(--info-gradient); color: #1e293b; border: none; }
+.gradient-card-danger { background: var(--danger-gradient); color: #fff; border: none; }
+
+.text-gradient {
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in-section {
+    animation: fadeIn 0.4s ease forwards;
+}
+
+/* ================= LAYOUT & SIDEBAR ================= */
+#sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    background-color: var(--bg-sidebar);
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.15);
+    transition: left var(--transition-speed) ease-in-out;
+}
+
+#sidebar .nav-link {
+    color: var(--text-sidebar);
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin: 4px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+#sidebar .nav-link i {
+    font-size: 1.15rem;
+}
+
+#sidebar .nav-link:hover, #sidebar .nav-link.active {
+    background-color: var(--bg-sidebar-hover);
+    color: #fff;
+}
+
+#sidebar .nav-link.active {
+    border-left: 4px solid #0d6efd;
+}
+
+#content-area {
+    margin-left: var(--sidebar-width);
+    min-height: 100vh;
+    transition: margin-left var(--transition-speed) ease-in-out;
+    padding: 24px;
+}
+
+/* Responsive sidebar */
+@media(max-width: 992px) {
+    #sidebar {
+        left: calc(-1 * var(--sidebar-width));
+    }
+    #sidebar.show {
+        left: 0;
+    }
+    #content-area {
+        margin-left: 0;
+    }
+}
+
+/* ================= NAVBAR ================= */
+.custom-navbar {
+    background: var(--bg-card);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 12px 20px;
+    margin-bottom: 24px;
+}
+
+/* ================= COMPONENT SPECIFIC STYLES ================= */
+/* Table designs */
+.table-container {
+    overflow-x: auto;
+}
+
+.custom-table {
+    color: var(--text-primary);
+}
+
+.custom-table th {
+    background-color: rgba(0,0,0,0.02) !important;
+    color: var(--text-secondary);
+    border-bottom: 2px solid var(--border-color);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: 16px;
+}
+
+.custom-table td {
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+/* Form controls styling in card */
+.form-control, .form-select {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 8px;
+    padding: 10px 14px;
+    transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+[data-theme="dark"] .form-control, [data-theme="dark"] .form-select {
+    background-color: rgba(15, 23, 42, 0.4);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+    color: var(--text-primary);
+    background-color: transparent;
+}
+
+/* Buttons */
+.btn-primary {
+    background: var(--primary-gradient);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+}
+
+/* Notification pane styling */
+.notification-bell {
+    position: relative;
+    cursor: pointer;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    padding: 3px 6px;
+    border-radius: 50%;
+    background-color: #dc3545;
+    color: white;
+    font-size: 0.65rem;
+}
+
+/* Custom list items */
+.custom-list-item {
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 16px;
+    transition: background-color 0.2s;
+}
+
+.custom-list-item:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="dark"] .custom-list-item:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Status Badges */
+.badge-status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-available { background-color: rgba(25, 135, 84, 0.15); color: #198754; }
+.status-allocated { background-color: rgba(13, 110, 253, 0.15); color: #0d6efd; }
+.status-maintenance { background-color: rgba(255, 193, 7, 0.15); color: #b58100; }
+.status-disposed { background-color: rgba(220, 53, 69, 0.15); color: #dc3545; }
+
+/* Booking Calendar Layout */
+.booking-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+/* Toast container for push notifications */
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1055;
+}
+
+/* Sparklines charts size */
+.chart-container-canvas {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+
+/* Login/Register Panel */
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), transparent),
+                radial-gradient(circle at bottom left, rgba(139, 92, 246, 0.08), transparent),
+                var(--bg-primary);
+}
+
+.auth-card {
+    width: 440px;
+    max-width: 100%;
+    padding: 40px;
+}
+
+.btn-sidebar-toggle {
+    display: none;
+    font-size: 1.5rem;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+@media(max-width: 992px) {
+    .btn-sidebar-toggle {
+        display: block;
+    }
+}

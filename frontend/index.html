@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AssetFlow - Enterprise Asset & Resource ERP</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- ================= TOASTS FOR SYSTEM EVENT NOTIFICATIONS ================= -->
+    <div id="toast-container"></div>
+
+    <!-- ================= AUTHENTICATION WRAPPER (LOGIN / REGISTER) ================= -->
+    <div id="auth-panel" class="auth-container">
+        <div class="card glass-panel auth-card col-md-6 col-lg-4">
+            <div class="text-center mb-4">
+                <span class="fs-2 text-gradient"><i class="bi-activity me-2"></i>AssetFlow</span>
+                <p id="auth-subtitle" class="text-secondary mt-1">Enterprise Asset & Resource ERP</p>
+            </div>
+            
+            <!-- Login Form -->
+            <form id="form-login" onsubmit="handleLogin(event)">
+                <div class="mb-3">
+                    <label for="login-email" class="form-label">Email address</label>
+                    <input type="email" class="form-control" id="login-email" required placeholder="admin@assetflow.com">
+                </div>
+                <div class="mb-4">
+                    <label for="login-password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="login-password" required placeholder="admin123">
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mb-3" id="btn-login-submit">Sign In to Dashboard</button>
+                <div class="text-center">
+                    <span class="text-secondary">First time here? </span><a href="#" onclick="toggleAuthMode(true)">Create Account</a>
+                </div>
+            </form>
+
+            <!-- Register Form -->
+            <form id="form-register" onsubmit="handleRegister(event)" style="display: none;">
+                <div class="mb-3">
+                    <label for="reg-email" class="form-label">Email address</label>
+                    <input type="email" class="form-control" id="reg-email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="reg-name" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="reg-name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="reg-role" class="form-label">Requested Role</label>
+                    <select class="form-select" id="reg-role" required>
+                        <option value="Employee">Employee (Read Only)</option>
+                        <option value="Department Head">Department Head</option>
+                        <option value="Asset Manager">Asset Manager</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="reg-dept" class="form-label">Select Department</label>
+                    <select class="form-select" id="reg-dept" required>
+                        <option value="1">Information Technology (IT)</option>
+                        <option value="2">Human Resources (HR)</option>
+                        <option value="3">Operations (OPS)</option>
+                        <option value="4">EC (37)</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="reg-password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="reg-password" required minlength="6">
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mb-3" id="btn-register-submit">Register Profile</button>
+                <div class="text-center">
+                    <span class="text-secondary">Existing Employee? </span><a href="#" onclick="toggleAuthMode(false)">Sign In</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= MAIN ERP PORTAL CONTAINER ================= -->
+    <div id="erp-panel" style="display: none;">
+        <!-- Side Navigation Bar -->
+        <nav id="sidebar">
+            <div class="text-center py-4 my-2 border-bottom border-secondary border-opacity-25Wrapper">
+                <span class="fs-4 text-white text-gradient fw-bold"><i class="bi-activity me-2"></i>AssetFlow</span>
+                <span class="d-block text-secondary fs-7 mt-1">Version 1.0 (SQLite)</span>
+            </div>
+            
+            <div class="nav flex-column mt-3" id="sidebar-links">
+                <a class="nav-link active" href="#" onclick="switchView('dashboard')" id="link-dashboard"><i class="bi-columns-gap"></i> Dashboard</a>
+                <a class="nav-link" href="#" onclick="switchView('departments')" id="link-departments"><i class="bi-building"></i> Departments</a>
+                <a class="nav-link" href="#" onclick="switchView('employees')" id="link-employees"><i class="bi-people"></i> Employees</a>
+                <a class="nav-link" href="#" onclick="switchView('categories')" id="link-categories"><i class="bi-bookmark-star"></i> Categories</a>
+                <a class="nav-link" href="#" onclick="switchView('assets')" id="link-assets"><i class="bi-box-seam"></i> Assets Inventory</a>
+                <a class="nav-link" href="#" onclick="switchView('allocations')" id="link-allocations"><i class="bi-person-check"></i> Allocations</a>
+                <a class="nav-link" href="#" onclick="switchView('transfers')" id="link-transfers"><i class="bi-arrow-left-right"></i> Transfers</a>
+                <a class="nav-link" href="#" onclick="switchView('bookings')" id="link-bookings"><i class="bi-calendar-event"></i> Bookings</a>
+                <a class="nav-link" href="#" onclick="switchView('maintenance')" id="link-maintenance"><i class="bi-wrench"></i> Maintenance</a>
+                <a class="nav-link" href="#" onclick="switchView('audits')" id="link-audits"><i class="bi-journal-check"></i> Audits</a>
+                <a class="nav-link" href="#" onclick="switchView('reports')" id="link-reports"><i class="bi-file-earmark-bar-graph"></i> Reports</a>
+                <a class="nav-link" href="#" onclick="switchView('activity-logs')" id="link-activity-logs" style="display: none;"><i class="bi-list-ul"></i> Activity Logs</a>
+                <a class="nav-link" href="#" onclick="switchView('settings')" id="link-settings" style="display: none;"><i class="bi-gear"></i> System Panel</a>
+            </div>
+        </nav>
+
+        <!-- Main Workspace -->
+        <main id="content-area">
+            <!-- Navbar Header -->
+            <nav class="custom-navbar glass-panel d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center">
+                    <button class="btn-sidebar-toggle me-3" onclick="toggleSidebarMenu()"><i class="bi-list"></i></button>
+                    <h4 id="navbar-view-title" class="mb-0 fw-bold">Dashboard Summary</h4>
+                </div>
+                
+                <div class="d-flex align-items-center gap-3">
+                    <!-- Notifications Dropdown -->
+                    <div class="dropdown">
+                        <div class="notification-bell" data-bs-toggle="dropdown" id="dropdownNotification" aria-expanded="false" onclick="fetchNotifications()">
+                            <i class="bi-bell fs-5 text-secondary"></i>
+                            <span class="notification-badge" id="notif-count" style="display: none;">0</span>
+                        </div>
+                        <ul class="dropdown-menu dropdown-menu-end glass-panel py-2" aria-labelledby="dropdownNotification" id="notification-list" style="width: 320px; max-height: 400px; overflow-y: auto;">
+                            <li><h6 class="dropdown-header text-primary border-bottom pb-2">User Notifications</h6></li>
+                            <!-- Dynamic Content -->
+                        </ul>
+                    </div>
+
+                    <!-- Dark Mode Toggle -->
+                    <button class="btn btn-outline-secondary border-0" onclick="toggleDarkMode()"><i id="dark-mode-icon" class="bi-moon-fill"></i></button>
+                    
+                    <!-- Profile Menu Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-light dropdown-toggle glass-panel border-0 text-primary" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span id="user-display-name">Loading...</span> (<small id="user-display-role" class="text-muted"></small>)
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end glass-panel border-0 mt-2" aria-labelledby="profileDropdown">
+                            <li><a class="dropdown-item" href="#" onclick="switchView('reports')"><i class="bi-gear me-2"></i> Export Reports</a></li>
+                            <li><hr class="dropdown-divider bg-secondary opacity-25"></li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="handleLogout()"><i class="bi-box-arrow-right me-2"></i> Sign Out</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- ================= VIEW PANELS (DYNAMIC ELEMENT VIEWS) ================= -->
+            
+            <!-- 1. DASHBOARD VIEW -->
+            <div id="view-dashboard" class="view-panel fade-in-section">
+                <!-- Metrics KPIs grid row -->
+                <div class="row g-3 mb-4" id="dashboard-kpi-row">
+                    <!-- Dynamic rendering of KPI Cards -->
+                </div>
+                
+                <!-- Charts Section -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <div class="card glass-panel p-4 h-100">
+                            <h5 class="fw-bold mb-3">Asset category split</h5>
+                            <div class="chart-container-canvas">
+                                <canvas id="chart-categories"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card glass-panel p-4 h-100">
+                            <h5 class="fw-bold mb-3">Asset status distribution</h5>
+                            <div class="chart-container-canvas">
+                                <canvas id="chart-status"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lists Section -->
+                <div class="row g-4">
+                    <!-- Pending Booking Approvals -->
+                    <div class="col-md-6" id="dashboard-bookings-col" style="display: none;">
+                        <div class="card glass-panel p-4 h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fw-bold mb-0">Booking Action Queue</h5>
+                                <span class="badge bg-primary rounded-pill" id="dashboard-bookings-count">0</span>
+                            </div>
+                            <div class="list-group list-group-flush" id="dashboard-bookings-list">
+                                <!-- Dynamic List -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Recent Activity Log console -->
+                    <div class="col-md-6">
+                        <div class="card glass-panel p-4 h-100">
+                            <h5 class="fw-bold mb-3">Recent System Activities</h5>
+                            <div class="list-group list-group-flush" id="dashboard-activities-list">
+                                <!-- Dynamic List -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. DEPARTMENTS VIEW -->
+            <div id="view-departments" class="view-panel fade-in-section" style="display: none;">
+                <div class="card glass-panel p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-bold mb-0">Departments Register</h5>
+                        <button class="btn btn-primary" onclick="openCreateDepartmentModal()" id="btn-add-department" style="display: none;"><i class="bi-plus-lg me-2"></i>Add Department</button>
+                    </div>
+                    <div class="table-container">
+                        <table class="table custom-table text-left" id="table-departments">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Dept Code</th>
+                                    <th>Dept Name</th>
+                                    <th>Department Head</th>
+                                    <th>Employees Count</th>
+                                    <th class="text-end text-admin-action" style="display:none;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dynamic content -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. EMPLOYEES VIEW -->
+            <div id="view-employees" class="view-panel fade-in-section" style="display: none;">
+                <div class="card glass-panel p-4">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+                        <h5 class="fw-bold mb-0">Employee Directory Directory</h5>
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <!-- Search -->
+                            <input type="text" class="form-control" placeholder="Search staff..." id="search-employees" oninput="loadEmployees()" style="width: 200px;">
+                            <!-- Dept filter -->
+                            <select class="form-select" id="filter-emp-dept" onchange="loadEmployees()" style="width: 180px;">
+                                <option value="">All Departments</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="table custom-table text-left" id="table-employees">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Full Name</th>
+                                    <th>Email</th>
+                                    <th>Organization Role</th>
+                                    <th>Assigned Department</th>
+                                    <th>Access Status</th>
+                                    <th class="text-end text-admin-action" style="display:none;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dynamic content -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. CATEGORIES VIEW -->
+            <div id="view-categories" class="view-panel fade-in-section" style="display: none;">
+                <div class="card glass-panel p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-bold mb-0">Asset Categories</h5>
+                        <button class="btn btn-primary" onclick="openCreateCategoryModal()" id="btn-add-category" style="display: none;"><i class="bi-plus-lg me-2"></i>Add Category</button>
+                    </div>
+                    <div class="table-container">
+                        <table class="table custom-table text-left" id="table-categories">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Category Code</th>
+                                    <th>Category Title</th>
+                                    <th>Description</th>
+                                    <th class="text-end text-mgr-action" style="display:none;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dynamic content -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. ASSETS VIEW -->
+            <div id="view-assets" class="view-panel fade-in-section" style="display: none;">
+                <div class="card glass-panel p-4">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+                        <h5 class="fw-bold mb-0">Assets Registry</h5>
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <!-- Search -->
+                            <input type="text" class="form-control" placeholder="Search asset tag/tag name..." id="search-assets" oninput="loadAssets()" style="width: 220px;">
+                            <!-- Category filter -->
+                            <select class="form-select" id="filter-asset-cat" onchange="loadAssets()" style="width: 160px;">
+                                <option value="">All Categories</option>
+                            </select>
+                            <!-- Status filter -->
+                            <select class="form-select" id="filter-asset-status" onchange="loadAssets()" style="width: 140px;">
+                                <option value="">All Statuses</option>
+                                <option value="Available">Available</option>
+                                <option value="Allocated">Allocated</option>
+                                <option value="Under Maintenance">Under Maintenance</option>
+                                <option value="Disposed">Disposed</option>
+                            </select>
+                            <button class="btn btn-primary btn-mgr-action" onclick="openCreateAssetModal()" id="btn-add-asset" style="display: none;"><i class="bi-plus-lg me-2"></i>Register Asset</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="table custom-table text-left" id="table-assets">
+                            <thead>
+                                <tr>
+                                    <th>Tag</th>
+                                    <th>Asset Name</th>
+                                    <th>Category</th>
+                                    <th>Model & Serial</th>
+                                    <th>Purchase Date / Cost</th>
+                                    <th>Status</th>
+                                    <th>Location</th>
+                                    <th class="text-end">Workflows</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dynamic content -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. ALLOCATIONS VIEW -->
+            <div id="view-allocations" class="view-panel fade-in-section" style="display: none;">
+                <div class="card glass-panel p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-bold mb-0">Asset Allocations Log</h5>
+                        <select class="form-select" id="filter-allocations" onchange="loadAllocations()" style="width: 180px;">
+                            <option value="">All Allocations</option>
+                            <option value="Active" selected>Active allocations</option>
+                            <option value="Returned">Returned history</option>
+                        </select>
+                    </div>
+                    <div class="table-container">
+                        <table class="table custom-table text-left" id="table-allocations">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Asset Tag & Title</th>
+                                    <th>Allocated To</th>
+                                    <th>Managed By</th>
+                                    <th>Date Assigned</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dynamic content -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7. TRANSFERS VIEW -->
+            <div id="view-transfers" class="view-panel fade-in-section" style="display: none;">
+                <div class="card glass-panel p-4">
+                    <h5 class="fw-bold mb-4">Inter-Departmental Transfer Requests</h5>
+                    <div class="table-container">
+                        <table class="table custom-table text-left" id="table-transfers">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Asset</th>
+                                    <th>Requested By</th>
+                                    <th>Source Dept</th>
+                                    <th>Target Dept</th>
+                                    <th>Transfer Reason</th>
+                                    <th>Status</th>
+                                    <th>Authorized Head</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dynamic content -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8. BOOKINGS VIEW -->
+            <div id="view-bookings" class="view-panel fade-in-section" style="display: none;">
+                <div class="card glass-panel p-4 mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-bold mb-0">Bookable Shared Resources</h5>
+                        <button class="btn btn-primary btn-mgr-action" onclick="openCreateResourceModal()" id="btn-add-resource" style="display: none;"><i class="bi-plus-lg me-2"></i>Add Resource</button>
+                    </div>
+                    <div class="row g-3" id="bookings-resource-grid">
+                        <!-- Dynamic list of assets -->
+                    </div>
+                </div>
+
+                <div class="card glass-panel p-4">
+                    <h5 class="fw-bold mb-4">Active & Historied Resource Bookings</h5>
+                    <div class="table-container">
+                        <table class="table custom-table text-left" id="table-bookings">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Resource Name</th>
+                                    <th>Booked By</th>
+                                    <th>Date Schedule range</th>
+                                    <th>Purpose</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dynamic content -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 9. MAINTENANCE VIEW -->
+            <div id="view-maintenance" class="view-panel fade-in-section" style="display: none;">
+                <div class="card glass-panel p-4">
+                    <h5 class="fw-bold mb-4">Upkeep & Repairs Log</h5>
+                    <div class="table-container">
+                        <table class="table custom-table text-left" id="table-maintenance">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Asset tag & Title</th>
+                                    <th>Defect Type</th>
+                                    <th>Date Scheduled</th>
+                                    <th>Completed On</th>
+                                    <th>Repairs Expense</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dynamic content -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 10. AUDITS VIEW -->
+            <div id="view-audits" class="view-panel fade-in-section" style="display: none;">
+                <div class="card glass-panel p-4">
+                    <h5 class="fw-bold mb-4">Periodic Physical Inventory Audits</h5>
+                    <div class="table-container">
+                        <table class="table custom-table text-left" id="table-audits">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Asset tag & Title</th>
+                                    <th>Physical State</th>
+                                    <th>Database Status</th>
+                                    <th>Audit Officer</th>
+                                    <th>Audit Date</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dynamic content -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 11. REPORTS VIEW -->
+            <div id="view-reports" class="view-panel fade-in-section" style="display: none;">
+                <div class="card glass-panel p-4">
+                    <h5 class="fw-bold mb-4">Export Custom Audits & Reports</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label for="report-filter-cat" class="form-label font-weight-bold">Select Category</label>
+                            <select class="form-select" id="report-filter-cat">
+                                <option value="">All Categories</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="report-filter-status" class="form-label font-weight-bold">Select Status</label>
+                            <select class="form-select" id="report-filter-status">
+                                <option value="">All Statuses</option>
+                                <option value="Available">Available</option>
+                                <option value="Allocated">Allocated</option>
+                                <option value="Under Maintenance">Under Maintenance</option>
+                                <option value="Disposed">Disposed</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex flex-wrap gap-3">
+                        <button class="btn btn-outline-success" onclick="triggerReportExport('csv')"><i class="bi-file-earmark-spreadsheet me-2"></i>Download CSV Report</button>
+                        <button class="btn btn-outline-primary" onclick="triggerReportExport('excel')"><i class="bi-file-earmark-excel me-2"></i>Download Excel Worksheet</button>
+                        <button class="btn btn-outline-danger" onclick="triggerReportExport('pdf')"><i class="bi-file-earmark-pdf me-2"></i>Download PDF Report</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 12. ACTIVITY LOGS VIEW -->
+            <div id="view-activity-logs" class="view-panel fade-in-section" style="display: none;">
+                <div class="card glass-panel p-4">
+                    <h5 class="fw-bold mb-4">Master Security Audit Logs</h5>
+                    <div class="table-container">
+                        <table class="table custom-table text-left" id="table-logs">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>User profile</th>
+                                    <th>Triggered Action</th>
+                                    <th>Audit Class</th>
+                                    <th>Additional Details</th>
+                                    <th>IP Location</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dynamic logs content -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 13. SYSTEM CONTROL PANEL VIEW -->
+            <div id="view-settings" class="view-panel fade-in-section" style="display: none;">
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <div class="card glass-panel p-4">
+                            <h5 class="fw-bold mb-4"><i class="bi-sliders2 me-2"></i>Company Profile Settings</h5>
+                            <form id="form-system-settings" onsubmit="submitSystemSettingsForm(event)">
+                                <div class="mb-3">
+                                    <label for="set-company-name" class="form-label">Company Name</label>
+                                    <input type="text" class="form-control" id="set-company-name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="set-address" class="form-label">Office Address</label>
+                                    <input type="text" class="form-control" id="set-address" required>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <label for="set-timezone" class="form-label">System Timezone</label>
+                                        <select class="form-select" id="set-timezone">
+                                            <option value="America/New_York">America/New_York (EST)</option>
+                                            <option value="Europe/London">Europe/London (GMT)</option>
+                                            <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
+                                            <option value="Asia/Tokyo">Asia/Tokyo (JST)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <label for="set-currency" class="form-label">Default Currency</label>
+                                        <select class="form-select" id="set-currency">
+                                            <option value="USD ($)">USD ($)</option>
+                                            <option value="EUR (€)">EUR (€)</option>
+                                            <option value="GBP (£)">GBP (£)</option>
+                                            <option value="INR (₹)">INR (₹)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <label for="set-timeout" class="form-label">Session Idle TTL (min)</label>
+                                        <input type="number" class="form-control" id="set-timeout" required>
+                                    </div>
+                                    <div class="col">
+                                        <label for="set-limit-pass" class="form-label">Password Min Length</label>
+                                        <input type="number" class="form-control" id="set-limit-pass" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Commit Global Configurations</button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card glass-panel p-4">
+                            <h5 class="fw-bold mb-4"><i class="bi-tags me-2"></i>Configure Lookup Metadata</h5>
+                            
+                            <div class="row g-2 mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary">Classification Category</label>
+                                    <select class="form-select" id="lookup-category-select" onchange="loadLookupOptionsList()">
+                                        <option value="Location">Locations / Cities</option>
+                                        <option value="Building">Buildings</option>
+                                        <option value="Floor">Office Floors</option>
+                                        <option value="Room">Office Rooms</option>
+                                        <option value="Vendor">Vendors</option>
+                                        <option value="Manufacturer">Manufacturers</option>
+                                        <option value="Condition">Asset Conditions</option>
+                                        <option value="Status">Asset Statuses</option>
+                                        <option value="TimeSlot">Booking Time Slots</option>
+                                        <option value="TransferReason">Transfer Reasons</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 d-flex align-items-end">
+                                    <button class="btn btn-success w-100" onclick="openAddLookupModal()"><i class="bi-plus-circle me-2"></i>Add Lookup Item</button>
+                                </div>
+                            </div>
+                            
+                            <div class="table-container" style="max-height: 250px; overflow-y: auto;">
+                                <table class="table custom-table text-left" id="table-lookups">
+                                    <thead>
+                                        <tr>
+                                            <th>Item ID</th>
+                                            <th>Category</th>
+                                            <th>Item Name</th>
+                                            <th class="text-end">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Dynamic lookups options -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ================================= MODALS SECTIONS ================================= -->
+
+    <!-- Modal 1: Register New Asset -->
+    <div class="modal fade" id="modal-create-asset" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content glass-panel text-primary border-0 p-3">
+                <form id="form-create-asset" onsubmit="submitCreateAssetForm(event)">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title fw-bold">Register Hardware/Asset</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="asset-form-name" class="form-label">Asset Name</label>
+                            <input type="text" class="form-control" id="asset-form-name" required placeholder="MacBook Pro M3 Max">
+                        </div>
+                        <div class="mb-3">
+                            <label for="asset-form-tag" class="form-label">Unique Asset Tag ID</label>
+                            <input type="text" class="form-control" id="asset-form-tag" required placeholder="AF-LAP-0091">
+                        </div>
+                        <div class="mb-3">
+                            <label for="asset-form-cat" class="form-label">Asset Classification</label>
+                            <select class="form-select" id="asset-form-cat" required></select>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="asset-form-model" class="form-label">Model</label>
+                                <input type="text" class="form-control" id="asset-form-model">
+                            </div>
+                            <div class="col">
+                                <label for="asset-form-serial" class="form-label">Serial Number</label>
+                                <input type="text" class="form-control" id="asset-form-serial">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="asset-form-date" class="form-label">Purchase Date</label>
+                                <input type="date" class="form-control" id="asset-form-date" required>
+                            </div>
+                            <div class="col">
+                                <label for="asset-form-cost" class="form-label">Cost ($ USD)</label>
+                                <input type="number" step="0.01" class="form-control" id="asset-form-cost" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="asset-form-loc" class="form-label">Physical Warehouse Location</label>
+                            <input type="text" class="form-control" id="asset-form-loc">
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Discard</button>
+                        <button type="submit" class="btn btn-primary" id="btn-save-asset">Commit Registration</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Allocate Asset -->
+    <div class="modal fade" id="modal-allocate-asset" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content glass-panel text-primary border-0 p-3">
+                <form id="form-allocate-asset" onsubmit="submitAllocateAssetForm(event)">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title fw-bold">Sign-out Asset Allocation</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="alloc-form-asset-id">
+                        <div class="mb-3">
+                            <label class="form-label d-block text-secondary">Asset name to distribute:</label>
+                            <h6 id="alloc-lbl-asset-name" class="fw-bold">N/A</h6>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-check-label mb-2 fw-semibold">Distribution Target Type</label>
+                            <div class="d-flex gap-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="allocType" id="allocTypeUser" checked onchange="toggleAllocFormFields()">
+                                    <label class="form-check-label" for="allocTypeUser">Specify Employee User</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="allocType" id="allocTypeDept" onchange="toggleAllocFormFields()">
+                                    <label class="form-check-label" for="allocTypeDept">Office division/Department</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="alloc-user-select-block" class="mb-3">
+                            <label for="alloc-form-user" class="form-label">Employee Beneficiary</label>
+                            <select class="form-select" id="alloc-form-user"></select>
+                        </div>
+                        <div id="alloc-dept-select-block" class="mb-3" style="display: none;">
+                            <label for="alloc-form-dept" class="form-label">Target Department</label>
+                            <select class="form-select" id="alloc-form-dept"></select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="alloc-form-due" class="form-label">Return Due Date (Optional)</label>
+                            <input type="date" class="form-control" id="alloc-form-due">
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="btn-save-allocation">Allocate Resource</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: Request Inter-Departmental Transfer -->
+    <div class="modal fade" id="modal-transfer-asset" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content glass-panel text-primary border-0 p-3">
+                <form id="form-transfer-asset" onsubmit="submitTransferAssetForm(event)">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title fw-bold">Transfer Asset Division</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="trans-form-asset-id">
+                        <div class="mb-3">
+                            <label class="form-label d-block text-secondary">Asset target for transfer:</label>
+                            <h6 id="trans-lbl-asset-name" class="fw-bold">N/A</h6>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="trans-form-target-dept">Receive Division Department</label>
+                            <select class="form-select" id="trans-form-target-dept" required></select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="trans-form-reason">Reason description justification</label>
+                            <textarea class="form-control" id="trans-form-reason" rows="3" required placeholder="Moving laptop to tech pool for Dev onboarding..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Submit request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 4: Resource Booking Modal -->
+    <div class="modal fade" id="modal-book-resource" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content glass-panel text-primary border-0 p-3">
+                <form id="form-book-resource" onsubmit="submitBookResourceForm(event)">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title fw-bold">Plan bookable room / unit</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="book-form-res-id">
+                        <div class="mb-3">
+                            <label class="form-label d-block text-secondary">Resource Title:</label>
+                            <h6 id="book-lbl-res-name" class="fw-bold">N/A</h6>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="book-form-start" class="form-label">Reserved From</label>
+                                <input type="datetime-local" class="form-control" id="book-form-start" required>
+                            </div>
+                            <div class="col">
+                                <label for="book-form-end" class="form-label">Reserved Until</label>
+                                <input type="datetime-local" class="form-control" id="book-form-end" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="book-form-purpose" class="form-label">Purpose description details</label>
+                            <input type="text" class="form-control" id="book-form-purpose" required placeholder="Quarterly team review meeting">
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="btn-save-booking">Reserve Resource</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 5: Log Asset Maintenance Ticket -->
+    <div class="modal fade" id="modal-maint-asset" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content glass-panel text-primary border-0 p-3">
+                <form id="form-maint-asset" onsubmit="submitMaintAssetForm(event)">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title fw-bold">Report Asset Maintenance</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="maint-form-asset-id">
+                        <div class="mb-3">
+                            <label class="form-label d-block text-secondary">Reporting hardware item:</label>
+                            <h6 id="maint-lbl-asset-name" class="fw-bold">N/A</h6>
+                        </div>
+                        <div class="mb-3">
+                            <label for="maint-form-type" class="form-label">Upkeep action type</label>
+                            <select class="form-select" id="maint-form-type" required>
+                                <option value="Corrective">Corrective Repair (Broken unit)</option>
+                                <option value="Preventive">Preventive Maintenance (Inspection)</option>
+                                <option value="Upgrade">Software/Hardware Upgrade</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="maint-form-desc" class="form-label">Issue reported details</label>
+                            <textarea class="form-control" id="maint-form-desc" rows="3" required placeholder="Describe what went wrong/needs fixing..."></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="maint-form-date" class="form-label">Target Schedule Date</label>
+                            <input type="datetime-local" class="form-control" id="maint-form-date" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="btn-save-maint">Initialize Log</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 6: Complete Maintenance Ticket -->
+    <div class="modal fade" id="modal-complete-maint" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content glass-panel text-primary border-0 p-3">
+                <form id="form-complete-maint" onsubmit="submitCompleteMaintForm(event)">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title fw-bold">Fulfill/Mark Maintenance Record</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="comp-form-rec-id">
+                        <div class="mb-3">
+                            <label for="comp-form-status" class="form-label">Resolve Status</label>
+                            <select class="form-select" id="comp-form-status" required>
+                                <option value="Completed">Completed successfully</option>
+                                <option value="Cancelled">Cancelled/Discarded</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="comp-form-cost" class="form-label">Actual Repair Cost ($ USD)</label>
+                            <input type="number" step="0.01" class="form-control" id="comp-form-cost" required value="0.00">
+                        </div>
+                        <div class="mb-3">
+                            <label for="comp-form-notes" class="form-label">Resolving Engineer Notes</label>
+                            <textarea class="form-control" id="comp-form-notes" rows="3" placeholder="Explain details of action, replaced batteries, screen, etc..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Process Resolution</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 7: Log Physical Audit -->
+    <div class="modal fade" id="modal-audit-asset" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content glass-panel text-primary border-0 p-3">
+                <form id="form-audit-asset" onsubmit="submitAuditAssetForm(event)">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title fw-bold">Inventory Verification Audit</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="audit-form-asset-id">
+                        <div class="mb-3">
+                            <label class="form-label d-block text-secondary">Asset target checklist:</label>
+                            <h6 id="audit-lbl-asset-name" class="fw-bold">N/A</h6>
+                        </div>
+                        <div class="mb-3">
+                            <label for="audit-form-cond" class="form-label">Physical Hardware State Condition</label>
+                            <select class="form-select" id="audit-form-cond" required>
+                                <option value="Excellent">Excellent condition</option>
+                                <option value="Good" selected>Good condition</option>
+                                <option value="Fair">Fair condition</option>
+                                <option value="Poor">Poor condition/Near failure</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="audit-form-status" class="form-label">Database Audit Status</label>
+                            <select class="form-select" id="audit-form-status" required>
+                                <option value="Verified">Verified present</option>
+                                <option value="Missing">Reported Missing/Lost</option>
+                                <option value="Misplaced">Misplaced/Off-location</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="audit-form-notes" class="form-label">Detailed Notes/Remarks</label>
+                            <textarea class="form-control" id="audit-form-notes" rows="3" placeholder="Condition details, desk/monitor setups..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="btn-save-audit">Commit Log</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 8: Create Department -->
+    <div class="modal fade" id="modal-create-dept" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content glass-panel text-primary border-0 p-3">
+                <form id="form-create-dept" onsubmit="submitCreateDeptForm(event)">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title fw-bold">Configure Department Division</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="dept-form-name" class="form-label">Department Name</label>
+                            <input type="text" class="form-control" id="dept-form-name" required placeholder="Finance & Strategy">
+                        </div>
+                        <div class="mb-3">
+                            <label for="dept-form-code" class="form-label">Department Code (Short)</label>
+                            <input type="text" class="form-control" id="dept-form-code" required placeholder="FIN">
+                        </div>
+                        <div class="mb-3">
+                            <label for="dept-form-manager" class="form-label">Department head manager (Optional)</label>
+                            <select class="form-select" id="dept-form-manager">
+                                <option value="0">No Manager Assigned</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="btn-save-dept">Create Division</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 9: Create Asset Category -->
+    <div class="modal fade" id="modal-create-cat" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content glass-panel text-primary border-0 p-3">
+                <form id="form-create-cat" onsubmit="submitCreateCatForm(event)">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title fw-bold">New Category Class</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="cat-form-name" class="form-label">Category Title</label>
+                            <input type="text" class="form-control" id="cat-form-name" required placeholder="Tablets & Handhelds">
+                        </div>
+                        <div class="mb-3">
+                            <label for="cat-form-code" class="form-label">Category Code (Short)</label>
+                            <input type="text" class="form-control" id="cat-form-code" required placeholder="TAB">
+                        </div>
+                        <div class="mb-3">
+                            <label for="cat-form-desc" class="form-label">Description Description</label>
+                            <input type="text" class="form-control" id="cat-form-desc" placeholder="iPads, Android pads and mobile terminals">
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="btn-save-category">Create Category</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 10: Create Bookable Shared Resource -->
+    <div class="modal fade" id="modal-create-res" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content glass-panel text-primary border-0 p-3">
+                <form id="form-create-res" onsubmit="submitCreateResForm(event)">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title fw-bold">Register bookable workspace / unit</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="res-form-name" class="form-label">Resource Grid Title</label>
+                            <input type="text" class="form-control" id="res-form-name" required placeholder="Staff Shared Vehicle B">
+                        </div>
+                        <div class="mb-3">
+                            <label for="res-form-type" class="form-label">Resource classificationType</label>
+                            <select class="form-select" id="res-form-type" required>
+                                <option value="Conference Room">Conference Rooms & Workspaces</option>
+                                <option value="Vehicle">Vehicle Transport fleet</option>
+                                <option value="Equipment">Audio/Visual/Electronic hardware Equipment</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="res-form-desc" class="form-label">Description notes inventory details</label>
+                            <input type="text" class="form-control" id="res-form-desc" placeholder="Model XYZ, key tags... capacity 4 people">
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Discard</button>
+                        <button type="submit" class="btn btn-primary" id="btn-save-resource">Add Resource</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 11: Edit or Manage Employee and User Settings -->
+    <div class="modal fade" id="modal-edit-employee" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content glass-panel text-primary border-0 p-3">
+                <form id="form-edit-employee" onsubmit="submitEditEmployeeForm(event)">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title fw-bold">Manage Employee Account</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="emp-edit-id">
+                        <div class="mb-3">
+                            <label for="emp-edit-name" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="emp-edit-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="emp-edit-email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="emp-edit-email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Assign System Roles (Choose one or more)</label>
+                            <div class="border rounded p-2" style="background: rgba(255,255,255,0.05);">
+                                <div class="form-check">
+                                    <input class="form-check-input emp-role-checkbox" type="checkbox" value="Employee" id="role-chk-employee">
+                                    <label class="form-check-label" for="role-chk-employee">Employee (View Only)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input emp-role-checkbox" type="checkbox" value="Department Head" id="role-chk-head">
+                                    <label class="form-check-label" for="role-chk-head">Department Head</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input emp-role-checkbox" type="checkbox" value="Asset Manager" id="role-chk-manager">
+                                    <label class="form-check-label" for="role-chk-manager">Asset Manager</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input emp-role-checkbox" type="checkbox" value="Admin" id="role-chk-admin">
+                                    <label class="form-check-label" for="role-chk-admin">System Admin</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="emp-edit-dept" class="form-label">Department Assignment</label>
+                            <select class="form-select" id="emp-edit-dept" required>
+                                <option value="1">Information Technology (IT)</option>
+                                <option value="2">Human Resources (HR)</option>
+                                <option value="3">Operations (OPS)</option>
+                                <option value="4">EC (37)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="emp-edit-active" checked>
+                                <label class="form-check-label" for="emp-edit-active">Profile Active & Approved</label>
+                            </div>
+                        </div>
+                        <div class="mb-3 border-top pt-3">
+                            <label for="emp-edit-password" class="form-label fw-semibold text-danger">Reset Password (Optional)</label>
+                            <input type="password" class="form-control" id="emp-edit-password" placeholder="Leave empty to keep matching password">
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save Profile Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 12: Add Lookup Option -->
+    <div class="modal fade" id="modal-add-lookup" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content glass-panel text-primary border-0 p-3">
+                <form id="form-add-lookup" onsubmit="submitAddLookupForm(event)">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title fw-bold">Add Lookup Metadata Option</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="lookup-add-cat-label" class="form-label">Metadata Classification</label>
+                            <input type="text" class="form-control-plaintext fw-bold" id="lookup-add-cat-label" readonly>
+                            <input type="hidden" id="lookup-add-cat-value">
+                        </div>
+                        <div class="mb-3">
+                            <label for="lookup-add-name" class="form-label">Item Value / Content</label>
+                            <input type="text" class="form-control" id="lookup-add-name" required placeholder="e.g. New York Head Office, Floor 3, Room 304...">
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Discard</button>
+                        <button type="submit" class="btn btn-primary">Create Lookup Item</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 Bundle with Popper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- ChartJS for charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Firebase SDK CDKs and Analytics Configuration -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyD4CPAagGEt3gH8FcV9qY0AJ2NGm94YPJs",
+        authDomain: "assetoddo.firebaseapp.com",
+        projectId: "assetoddo",
+        storageBucket: "assetoddo.firebasestorage.app",
+        messagingSenderId: "490019458892",
+        appId: "1:490019458892:web:fba53fd80b2902ac3209e9",
+        measurementId: "G-RE73XJ7752"
+      };
+      firebase.initializeApp(firebaseConfig);
+      firebase.analytics();
+    </script>
+
+    <!-- App javascript -->
+    <script src="js/app.js"></script>
+</body>
+</html>
